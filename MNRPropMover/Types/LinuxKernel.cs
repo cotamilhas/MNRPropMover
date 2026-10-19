@@ -17,7 +17,7 @@ namespace MNRPropMover.Types
         }
 
         [DllImport("libc")]
-        public static extern unsafe int process_vm_readv(int pid,
+        public static extern int process_vm_readv(int pid,
             iovec local_iov,
             ulong liovcnt,
             iovec remote_iov,
@@ -25,7 +25,7 @@ namespace MNRPropMover.Types
             ulong flags);
             
         [DllImport("libc")]
-        private static extern unsafe int process_vm_readv(int pid,
+        private static extern int process_vm_writev(int pid,
             iovec local_iov,
             ulong liovcnt,
             iovec remote_iov,
