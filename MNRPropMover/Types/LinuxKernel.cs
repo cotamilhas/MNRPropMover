@@ -9,7 +9,7 @@ namespace MNRPropMover.Types
 {
     internal class LinuxKernel
     {
-#if _WINDOWS
+#if _LINUX
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct iovec
         {
