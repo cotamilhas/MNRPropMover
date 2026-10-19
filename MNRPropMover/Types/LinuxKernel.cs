@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,27 +9,27 @@ namespace MNRPropMover.Types
 {
     internal class LinuxKernel
     {
-#if _LINUX
+#if _WINDOWS
         [StructLayout(LayoutKind.Sequential)]
-        struct iovec
+        public unsafe struct iovec
         {
-          public nint iov_base;
+          public void* iov_base;
           public int iov_len;
         }
 
         [DllImport("libc")]
-        public static extern int process_vm_readv(int pid,
-            iovec local_iov,
+        public static extern unsafe int process_vm_readv(int pid,
+            iovec* local_iov,
             ulong liovcnt,
-            iovec remote_iov,
+            iovec* remote_iov,
             ulong riovcnt,
             ulong flags);
             
         [DllImport("libc")]
-        private static extern int process_vm_writev(int pid,
-            iovec local_iov,
+        public static extern unsafe int process_vm_writev(int pid,
+            iovec* local_iov,
             ulong liovcnt,
-            iovec remote_iov,
+            iovec* remote_iov,
             ulong riovcnt,
             ulong flags);
 #endif
