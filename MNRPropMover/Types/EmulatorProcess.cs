@@ -111,7 +111,7 @@ namespace MNRPropMover.Types
             {
                 var localIov = new LinuxKernel.iovec { iov_base = &buffer, iov_len = buffer.Length };
                 var remoteIov = new LinuxKernel.iovec { iov_base = (void*)address, iov_len = buffer.Length };
-                return LinuxKernel.process_vm_ritev(_process.Id, &localIov, 1, &remoteIov, 1, 0) != -1;
+                return LinuxKernel.process_vm_writev(_process.Id, &localIov, 1, &remoteIov, 1, 0) != -1;
             }
 #endif
         }
