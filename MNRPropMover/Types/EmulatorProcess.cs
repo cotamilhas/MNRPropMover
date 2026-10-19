@@ -100,8 +100,8 @@ namespace MNRPropMover.Types
         private bool WriteMemory(ulong address, byte[] buffer)
         {
 #if _WINDOWS
-            int bytesRead = 0;
-            return Win32.WriteProcessMemory(_processHandle, address, buffer, buffer.Length, ref bytesRead);
+            int bytesWritten = 0;
+            return Win32.WriteProcessMemory(_processHandle, address, buffer, buffer.Length, ref bytesWritten);
 #elif _LINUX
             return LinuxKernel.process_vm_writev(_process.Id, new LinuxKernel.iovec { iov_base = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0), iov_len = buffer.Length }, 1,
                 new LinuxKernel.iovec { iov_base = (nint)address, iov_len = buffer.Length }, 1, 0) != -1;
