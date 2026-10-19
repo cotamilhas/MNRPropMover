@@ -92,9 +92,12 @@ namespace MNRPropMover.Types
             int bytesRead = 0;
             return Win32.ReadProcessMemory(_processHandle, address, buffer, buffer.Length, ref bytesRead);
 #elif _LINUX
-            var localIov = new LinuxKernel.iovec { iov_base = &buffer, iov_len = buffer.Length };
-            var remoteIov = new LinuxKernel.iovec { iov_base = (void*)address, iov_len = buffer.Length };
-            return LinuxKernel.process_vm_readv(_process.Id, &localIov, 1, &remoteIov, 1, 0) != -1;
+            unsafe
+            {
+                var localIov = new LinuxKernel.iovec { iov_base = &buffer, iov_len = buffer.Length };
+                var remoteIov = new LinuxKernel.iovec { iov_base = (void*)address, iov_len = buffer.Length };
+                return LinuxKernel.process_vm_readv(_process.Id, &localIov, 1, &remoteIov, 1, 0) != -1;
+            }
 #endif
         }
 
@@ -104,9 +107,12 @@ namespace MNRPropMover.Types
             int bytesWritten = 0;
             return Win32.WriteProcessMemory(_processHandle, address, buffer, buffer.Length, ref bytesWritten);
 #elif _LINUX
-            var localIov = new LinuxKernel.iovec { iov_base = &buffer, iov_len = buffer.Length };
-            var remoteIov = new LinuxKernel.iovec { iov_base = (void*)address, iov_len = buffer.Length };
-            return LinuxKernel.process_vm_ritev(_process.Id, &localIov, 1, &remoteIov, 1, 0) != -1;
+            unsafe
+            {
+                var localIov = new LinuxKernel.iovec { iov_base = &buffer, iov_len = buffer.Length };
+                var remoteIov = new LinuxKernel.iovec { iov_base = (void*)address, iov_len = buffer.Length };
+                return LinuxKernel.process_vm_ritev(_process.Id, &localIov, 1, &remoteIov, 1, 0) != -1;
+            }
 #endif
         }
     }
