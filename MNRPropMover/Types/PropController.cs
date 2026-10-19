@@ -15,7 +15,7 @@ namespace MNRPropMover.Types
         private float stepProgress = 0;
         private PropControllerState state = PropControllerState.None;
 
-        public MNRProp Prop { get; protected set; }
+        public MNRProp? Prop { get; protected set; }
 
         public void SetProp(MNRProp prop)
         {

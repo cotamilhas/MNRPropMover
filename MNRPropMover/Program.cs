@@ -28,7 +28,7 @@ namespace MNRPropMover
                 var deltaTime = 0.3333f;
 
                 if (windowTitle.StartsWith("FPS: "))
-                    deltaTime = 1 / float.Parse(windowTitle.Substring(5, windowTitle.IndexOf(" | ") - 5));
+                    deltaTime = 1f / float.Parse(windowTitle.Substring(5, windowTitle.IndexOf(" | ") - 5));
 
                 Update(deltaTime);
 
