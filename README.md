@@ -2,6 +2,10 @@
 
 A utility that adds extra adjustments to props.
 
+## How to download
+
+Either clone this repository and build yourself, or download one of the [precompiled binaries](../..//releases/latest).
+
 ## How to use
 
 Firstly start RPCS3, then run this program. It will automatically hook to RPCS3 and start working immediately.
