@@ -39,6 +39,9 @@ namespace MNRPropMover
 
                 Update(deltaTime);
 
+                // The below is to fix a memory leak, this shouldnt really be needed and is bad practise.
+                GC.Collect();
+
                 Thread.Sleep((int)(deltaTime * 1000f));
             }
         }
@@ -56,8 +59,14 @@ namespace MNRPropMover
 
                 _propController.Update(deltaTime);
 
+#if _WINDOWS
                 var propPrevious = Win32.GetAsyncKeyState(Win32.VK_OEM_4) != 0;
                 var propNext = Win32.GetAsyncKeyState(Win32.VK_OEM_6) != 0;
+#else
+                // TODO: We want to move this to PropController and implement controls for linux
+                var propPrevious = false;
+                var propNext = false;
+#endif
                 if (!pressed)
                 {
                     if (propPrevious && currentProp.PreviousProp != null)
@@ -77,13 +86,19 @@ namespace MNRPropMover
                 }
 
                 Console.Write($"Current Prop Information:\n\n" +
-                                $"Address: 0x{currentProp.Address:x}\n" +
                                 $"Position: X={currentProp.PositionX}, Y={currentProp.PositionY}, Z={currentProp.PositionZ}\n" +
                                 $"Rotation: X={currentProp.RotationX}, Y={currentProp.RotationY}, Z={currentProp.RotationZ}\n" +
                                 $"Scale: {currentProp.Scale}");
 
                 if (_debug)
                 {
+                    Console.Write("\n\nDebug Information:\n\n" +
+                                      $"Prop Stamp Address: 0x{RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + currentProp.Address:x}\n" +
+                                      $"Prop Stamp Address (VM): 0x{currentProp.Address:x}");
+
+                    Console.Write($"\n\nFlags:\n\n{((int)currentProp.Flags).ToBinDump()}");
+                    Console.Write($"\n\nSnap Flags:\n\n{((int)currentProp.SnapFlags).ToBinDump()}");
+
                     Console.Write($"\n\nProp Buffer:\n\n{currentProp.ToBuffer().ToHexDump()}");
                 }
             }

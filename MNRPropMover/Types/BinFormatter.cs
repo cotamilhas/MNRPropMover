@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MNRPropMover.Types
 {
-    internal static class HexFormatter
+    internal static class BinFormatter
     {
         public static string ToHexDump(this byte[] buffer)
         {
@@ -34,6 +34,32 @@ namespace MNRPropMover.Types
                 }
                 sb.AppendLine();
             }
+
+            return sb.ToString();
+        }
+
+        public static string ToBinDump(this int value)
+        {
+            var sb = new StringBuilder();
+
+            var bits = sizeof(int) * 8;
+
+            sb.Append("Bit(b)");
+
+            for (int i = 0; i < bits; i++)
+            {
+                sb.Append($" {i.ToString().PadLeft(2, '0')}");
+            }
+
+            sb.AppendLine("  Value");
+            sb.Append("      ");
+
+            for (int i = 0; i < bits; i++)
+            {
+                sb.Append($"  {(((value >> i) & 1) != 0 ? "1" : "0")}");
+            }
+
+            sb.AppendLine($"  0x{value:x}");
 
             return sb.ToString();
         }

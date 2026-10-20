@@ -84,6 +84,18 @@ namespace MNRPropMover.Types
             set { _process.WriteFloat32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer + 0x30, value); }
         }
 
+        public MNRPropSnapFlags SnapFlags
+        {
+            get { return (MNRPropSnapFlags)_process.ReadInt32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer + 0x38); }
+            set { _process.WriteInt32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer + 0x38, (int)value); }
+        }
+
+        public MNRPropFlags Flags
+        {
+            get { return (MNRPropFlags)_process.ReadInt32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer + 0x4C); }
+            set { _process.WriteInt32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer + 0x4C, (int)value); }
+        }
+
         public float Scale
         {
             get { return _process.ReadFloat32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer + 0x64); }

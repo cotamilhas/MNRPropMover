@@ -120,6 +120,19 @@ namespace MNRPropMover.Types
             return BinaryPrimitives.ReadInt32BigEndian(buffer);
         }
 
+        public bool WriteInt32(ulong address, int value)
+        {
+            if (!IsRunning)
+                return false;
+
+            byte[] buffer = new byte[sizeof(int)];
+            BinaryPrimitives.WriteInt32BigEndian(buffer, value);
+            if (!WriteMemory(address, buffer))
+                return false;
+
+            return true;
+        }
+
         public float ReadFloat32(ulong address)
         {
             if (!IsRunning)
