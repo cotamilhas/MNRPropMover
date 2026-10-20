@@ -67,6 +67,7 @@ namespace MNRPropMover
                 var propPrevious = false;
                 var propNext = false;
 #endif
+
                 if (!pressed)
                 {
                     if (propPrevious && currentProp.PreviousProp != null)
