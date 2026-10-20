@@ -10,12 +10,33 @@ namespace MNRPropMover.Types
     {
         None = 0,
 
-        TiltForward = 1,
-        TiltBackward = 2,
-        TiltLeft = 4,
-        TiltRight = 8,
+        TiltForward = (1 << 0),
+        TiltBackward = (1 << 1),
+        TiltLeft = (1 << 2),
+        TiltRight = (1 << 3),
+
+        RotateLeft = (1 << 4),
+        RotateRight = (1 << 5),
+
+        ScaleUp = (1 << 6),
+        ScaleDown = (1 << 7),
+
+        MoveForwards = (1 << 8),
+        MoveBackwards = (1 << 9),
+        MoveLeft = (1 << 10),
+        MoveRight = (1 << 11),
+        MoveUp = (1 << 12),
+        MoveDown = (1 << 13),
 
         TiltForwardBackward = TiltForward | TiltBackward,
-        TiltLeftRight = TiltLeft | TiltRight
+        TiltLeftRight = TiltLeft | TiltRight,
+
+        RotateLeftRight = RotateLeft | RotateRight,
+
+        ScaleUpDown = ScaleUp | ScaleDown,
+
+        MoveForwardsBackwards = MoveForwards | MoveBackwards,
+        MoveLeftRight = MoveLeft | MoveRight,
+        MoveUpDown = MoveUp | MoveDown
     }
 }

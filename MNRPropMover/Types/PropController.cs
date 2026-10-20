@@ -10,6 +10,7 @@ namespace MNRPropMover.Types
     {
         const float MIN_STEP = 0f;
         const float MAX_STEP = 0.05f;
+        const float MAX_STEP_MOVE = MAX_STEP * 10f;
         const float DURATION = 2f;
 
         private float stepProgress = 0;
@@ -34,6 +35,19 @@ namespace MNRPropMover.Types
             if (Win32.GetAsyncKeyState(Win32.VK_DOWN) != 0) currentState |= PropControllerState.TiltBackward;
             if (Win32.GetAsyncKeyState(Win32.VK_LEFT) != 0) currentState |= PropControllerState.TiltLeft;
             if (Win32.GetAsyncKeyState(Win32.VK_RIGHT) != 0) currentState |= PropControllerState.TiltRight;
+
+            if (Win32.GetAsyncKeyState(Win32.VK_Q) != 0) currentState |= PropControllerState.RotateLeft;
+            if (Win32.GetAsyncKeyState(Win32.VK_E) != 0) currentState |= PropControllerState.RotateRight;
+
+            if (Win32.GetAsyncKeyState(Win32.VK_PRIOR) != 0) currentState |= PropControllerState.ScaleUp;
+            if (Win32.GetAsyncKeyState(Win32.VK_NEXT) != 0) currentState |= PropControllerState.ScaleDown;
+
+            if (Win32.GetAsyncKeyState(Win32.VK_W) != 0) currentState |= PropControllerState.MoveForwards;
+            if (Win32.GetAsyncKeyState(Win32.VK_S) != 0) currentState |= PropControllerState.MoveBackwards;
+            if (Win32.GetAsyncKeyState(Win32.VK_A) != 0) currentState |= PropControllerState.MoveLeft;
+            if (Win32.GetAsyncKeyState(Win32.VK_D) != 0) currentState |= PropControllerState.MoveRight;
+            if (Win32.GetAsyncKeyState(Win32.VK_R) != 0) currentState |= PropControllerState.MoveUp;
+            if (Win32.GetAsyncKeyState(Win32.VK_F) != 0) currentState |= PropControllerState.MoveDown;
 #else
             // TODO: Implement backgground key detection for Linux (Equivalent of GetAsyncKeyState?)
             while (Console.KeyAvailable)
@@ -44,12 +58,35 @@ namespace MNRPropMover.Types
                 else if (key == ConsoleKey.DownArrow) currentState |= PropControllerState.TiltBackward;
                 else if (key == ConsoleKey.LeftArrow) currentState |= PropControllerState.TiltLeft;
                 else if (key == ConsoleKey.RightArrow) currentState |= PropControllerState.TiltRight;
+                
+                else if (key == ConsoleKey.Q) currentState |= PropControllerState.RotateLeft;
+                else if (key == ConsoleKey.E) currentState |= PropControllerState.RotateRight;
+
+                else if (key == ConsoleKey.PageUp) currentState |= PropControllerState.ScaleUp;
+                else if (key == ConsoleKey.PageDown) currentState |= PropControllerState.ScaleDown;
+                
+                else if (key == ConsoleKey.W) currentState |= PropControllerState.MoveForwards;
+                else if (key == ConsoleKey.S) currentState |= PropControllerState.MoveBackwards;
+                else if (key == ConsoleKey.A) currentState |= PropControllerState.MoveLeft;
+                else if (key == ConsoleKey.D) currentState |= PropControllerState.MoveRight;
+                else if (key == ConsoleKey.R) currentState |= PropControllerState.MoveUp;
+                else if (key == ConsoleKey.F) currentState |= PropControllerState.MoveDown;
             }
 #endif
 
             if (((currentState | state) & PropControllerState.TiltForwardBackward) == PropControllerState.TiltForwardBackward)
                 stepProgress = 0;
             else if (((currentState | state) & PropControllerState.TiltLeftRight) == PropControllerState.TiltLeftRight)
+                stepProgress = 0;
+            else if (((currentState | state) & PropControllerState.RotateLeftRight) == PropControllerState.RotateLeftRight)
+                stepProgress = 0;
+            else if (((currentState | state) & PropControllerState.ScaleUpDown) == PropControllerState.ScaleUpDown)
+                stepProgress = 0;
+            else if (((currentState | state) & PropControllerState.MoveForwardsBackwards) == PropControllerState.MoveForwardsBackwards)
+                stepProgress = 0;
+            else if (((currentState | state) & PropControllerState.MoveLeftRight) == PropControllerState.MoveLeftRight)
+                stepProgress = 0;
+            else if (((currentState | state) & PropControllerState.MoveUpDown) == PropControllerState.MoveUpDown)
                 stepProgress = 0;
             else if (currentState != PropControllerState.None)
             {
@@ -67,6 +104,29 @@ namespace MNRPropMover.Types
                 Prop.RotationZ -= Lerp(MIN_STEP, MAX_STEP, stepProgress);
             if ((currentState & PropControllerState.TiltRight) == PropControllerState.TiltRight)
                 Prop.RotationZ += Lerp(MIN_STEP, MAX_STEP, stepProgress);
+
+            if ((currentState & PropControllerState.RotateLeft) == PropControllerState.RotateLeft)
+                Prop.RotationX -= Lerp(MIN_STEP, MAX_STEP, stepProgress);
+            if ((currentState & PropControllerState.RotateRight) == PropControllerState.RotateRight)
+                Prop.RotationX += Lerp(MIN_STEP, MAX_STEP, stepProgress);
+
+            if ((currentState & PropControllerState.ScaleUp) == PropControllerState.ScaleUp)
+                Prop.Scale += Lerp(MIN_STEP, MAX_STEP, stepProgress);
+            if ((currentState & PropControllerState.ScaleDown) == PropControllerState.ScaleDown)
+                Prop.Scale -= Lerp(MIN_STEP, MAX_STEP, stepProgress);
+
+            if ((currentState & PropControllerState.MoveForwards) == PropControllerState.MoveForwards)
+                Prop.PositionY += Lerp(MIN_STEP, MAX_STEP_MOVE, stepProgress);
+            if ((currentState & PropControllerState.MoveBackwards) == PropControllerState.MoveBackwards)
+                Prop.PositionY -= Lerp(MIN_STEP, MAX_STEP_MOVE, stepProgress);
+            if ((currentState & PropControllerState.MoveLeft) == PropControllerState.MoveLeft)
+                Prop.PositionX -= Lerp(MIN_STEP, MAX_STEP_MOVE, stepProgress);
+            if ((currentState & PropControllerState.MoveRight) == PropControllerState.MoveRight)
+                Prop.PositionX += Lerp(MIN_STEP, MAX_STEP_MOVE, stepProgress);
+            if ((currentState & PropControllerState.MoveUp) == PropControllerState.MoveUp)
+                Prop.PositionZ += Lerp(MIN_STEP, MAX_STEP_MOVE, stepProgress);
+            if ((currentState & PropControllerState.MoveDown) == PropControllerState.MoveDown)
+                Prop.PositionZ -= Lerp(MIN_STEP, MAX_STEP_MOVE, stepProgress);
 
             state = currentState;
         }

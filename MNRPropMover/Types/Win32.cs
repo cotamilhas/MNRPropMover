@@ -23,10 +23,20 @@ namespace MNRPropMover.Types
         [DllImport("kernel32.dll")]
         public static extern bool WriteProcessMemory(nint hProcess, ulong lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesWritten);
 
+        public static readonly int VK_PRIOR = 0x21;
+        public static readonly int VK_NEXT = 0x22;
         public static readonly int VK_LEFT = 0x25;
         public static readonly int VK_UP = 0x26;
         public static readonly int VK_RIGHT = 0x27;
         public static readonly int VK_DOWN = 0x28;
+        public static readonly int VK_W = 0x57;
+        public static readonly int VK_A = 0x41;
+        public static readonly int VK_S = 0x53;
+        public static readonly int VK_D = 0x44;
+        public static readonly int VK_Q = 0x51;
+        public static readonly int VK_E = 0x45;
+        public static readonly int VK_R = 0x52;
+        public static readonly int VK_F = 0x46;
 
         [DllImport("User32.dll")]
         public static extern short GetAsyncKeyState(int vKey);
