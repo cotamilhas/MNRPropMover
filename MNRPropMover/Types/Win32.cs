@@ -37,6 +37,8 @@ namespace MNRPropMover.Types
         public static readonly int VK_E = 0x45;
         public static readonly int VK_R = 0x52;
         public static readonly int VK_F = 0x46;
+        public static readonly int VK_OEM_4 = 0xDB; // [
+        public static readonly int VK_OEM_6 = 0xDD; // ]
 
         [DllImport("User32.dll")]
         public static extern short GetAsyncKeyState(int vKey);

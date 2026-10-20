@@ -6,10 +6,16 @@ namespace MNRPropMover
     {
         private static EmulatorProcess _process;
         private static MNRPropStamp _propStamp;
+        private static MNRWorldChunkList _worldChunks;
         private static PropController _propController;
+
+        private static bool _debug = false;
 
         static void Main(string[] args)
         {
+            if (args.Contains("--debug") || args.Contains("-d"))
+                _debug = true;
+
             _process = new EmulatorProcess("rpcs3");
             if (!_process.Attach())
             {
@@ -18,6 +24,7 @@ namespace MNRPropMover
             }
 
             _propStamp = new MNRPropStamp(_process);
+            _worldChunks = new MNRWorldChunkList(_process);
             _propController = new PropController();
 
             while (true)
@@ -36,6 +43,8 @@ namespace MNRPropMover
             }
         }
 
+        static bool pressed = false;
+
         static void Update(float deltaTime)
         {
             var currentProp = _propStamp.CurrentProp;
@@ -47,11 +56,36 @@ namespace MNRPropMover
 
                 _propController.Update(deltaTime);
 
+                var propPrevious = Win32.GetAsyncKeyState(Win32.VK_OEM_4) != 0;
+                var propNext = Win32.GetAsyncKeyState(Win32.VK_OEM_6) != 0;
+                if (!pressed)
+                {
+                    if (propPrevious && currentProp.PreviousProp != null)
+                    {
+                        _propStamp.CurrentProp = currentProp.PreviousProp;
+                        pressed = true;
+                    }
+                    if (propNext && currentProp.NextProp != null)
+                    {
+                        _propStamp.CurrentProp = currentProp.NextProp;
+                        pressed = true;
+                    }
+                }
+                else if (pressed && !propPrevious && !propNext)
+                {
+                    pressed = false;
+                }
+
                 Console.Write($"Current Prop Information:\n\n" +
-                               $"Address: 0x{currentProp.Address:x}\n" +
-                               $"Position: X={currentProp.PositionX}, Y={currentProp.PositionY}, Z={currentProp.PositionZ}\n" +
-                               $"Rotation: X={currentProp.RotationX}, Y={currentProp.RotationY}, Z={currentProp.RotationZ}\n" +
-                               $"Scale: {currentProp.Scale}");
+                                $"Address: 0x{currentProp.Address:x}\n" +
+                                $"Position: X={currentProp.PositionX}, Y={currentProp.PositionY}, Z={currentProp.PositionZ}\n" +
+                                $"Rotation: X={currentProp.RotationX}, Y={currentProp.RotationY}, Z={currentProp.RotationZ}\n" +
+                                $"Scale: {currentProp.Scale}");
+
+                if (_debug)
+                {
+                    Console.Write($"\n\nProp Buffer:\n\n{currentProp.ToBuffer().ToHexDump()}");
+                }
             }
             else
                 Console.Write("No prop is currently selected.");

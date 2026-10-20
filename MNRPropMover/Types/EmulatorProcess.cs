@@ -88,11 +88,36 @@ namespace MNRPropMover.Types
             if (!IsRunning)
                 return 0;
 
-            byte[] buffer = new byte[sizeof(ulong)];
+            byte[] buffer = new byte[sizeof(uint)];
             if (!ReadMemory(address, buffer))
                 return 0;
 
             return BinaryPrimitives.ReadUInt32BigEndian(buffer);
+        }
+
+        public bool WritePointer32(ulong address, uint pointer)
+        {
+            if (!IsRunning)
+                return false;
+
+            byte[] buffer = new byte[sizeof(uint)];
+            BinaryPrimitives.WriteUInt32BigEndian(buffer, pointer);
+            if (!WriteMemory(address, buffer))
+                return false;
+
+            return true;
+        }
+
+        public int ReadInt32(ulong address)
+        {
+            if (!IsRunning)
+                return 0;
+
+            byte[] buffer = new byte[sizeof(int)];
+            if (!ReadMemory(address, buffer))
+                return 0;
+
+            return BinaryPrimitives.ReadInt32BigEndian(buffer);
         }
 
         public float ReadFloat32(ulong address)
@@ -118,6 +143,18 @@ namespace MNRPropMover.Types
                 return false;
 
             return true;
+        }
+
+        public byte[] ReadBytes(ulong address, int length)
+        {
+            if (!IsRunning)
+                return new byte[0];
+
+            byte[] buffer = new byte[length];
+            if (!ReadMemory(address, buffer))
+                return new byte[0];
+
+            return buffer;
         }
 
         private bool ReadMemory(ulong address, byte[] buffer)

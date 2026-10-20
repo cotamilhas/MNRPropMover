@@ -8,7 +8,49 @@ namespace MNRPropMover.Types
 {
     internal class MNRProp
     {
-        public ulong Address => _pointer;
+        const int SIZE = 0xE0;
+
+        public uint Address => _pointer;
+
+        public MNRProp? PreviousProp
+        {
+            get
+            {
+                var pProp = _process.ReadPointer32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer);
+
+                if (pProp == 0)
+                    return null;
+
+                var prop = new MNRProp(_process, pProp);
+
+                if (prop.UID == 0x014682D0) // This prop UID crashes the game if its selected, not sure what it is?
+                    return prop.PreviousProp;
+
+                return prop;
+            }
+        }
+        public MNRProp? NextProp
+        {
+            get
+            {
+                var pProp = _process.ReadPointer32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer + 0x04);
+
+                if (pProp == 0)
+                    return null;
+
+                var prop = new MNRProp(_process, pProp);
+
+                if (prop.UID == 0x014682D0) // This prop UID crashes the game if its selected, not sure what it is?
+                    return prop.NextProp;
+
+                return prop;
+            }
+        }
+
+        public int UID
+        {
+            get { return _process.ReadInt32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer + 0x14); }
+        }
 
         public float PositionX
         {
@@ -49,12 +91,14 @@ namespace MNRPropMover.Types
         }
 
         private EmulatorProcess _process;
-        private ulong _pointer;
+        private uint _pointer;
 
-        public MNRProp(EmulatorProcess process, ulong pointer)
+        public MNRProp(EmulatorProcess process, uint pointer)
         {
             _process = process;
             _pointer = pointer;
         }
+
+        public byte[] ToBuffer() => _process.ReadBytes(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer, SIZE);
     }
 }

@@ -1,11 +1,15 @@
 {
   "profiles": {
-    "MNRPropMover": {
-      "commandName": "Project"
-    },
     "WSL": {
       "commandName": "WSL2",
       "distributionName": ""
+    },
+    "MNRPropMover - Normal": {
+      "commandName": "Project"
+    },
+    "MNRPropMover - Debug": {
+      "commandName": "Project",
+      "commandLineArgs": "--debug"
     }
   }
 }

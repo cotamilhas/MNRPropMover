@@ -19,6 +19,10 @@ namespace MNRPropMover.Types
 
                 return new MNRProp(_process, pCurrentProp);
             }
+            set
+            { 
+                _process.WritePointer32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + RPCS3Constants.PROP_STAMP_ADDRESS, value == null ? 0 : value.Address);
+            }
         }
 
         private EmulatorProcess _process;
