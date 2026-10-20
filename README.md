@@ -10,6 +10,14 @@ Either clone this repository and build yourself, or download one of the [precomp
 
 Firstly start RPCS3, then run this program. It will automatically hook to RPCS3 and start working immediately.
 
+> **Linux notice:** If the program cannot read the prop selection from RPCS3, Linux may be blocking access to another process. You can temporarily allow it with:
+>
+> ```bash
+> sudo sysctl -w kernel.yama.ptrace_scope=0
+> ```
+>
+> This reduces process isolation for the whole system and resets after reboot. Restore the usual setting with `sudo sysctl -w kernel.yama.ptrace_scope=1` when finished.
+
 Moving a prop will move it off of the prop origin point rather than move the prop stamp.
 This can be handy for getting props in difficult places (including out of bounds) but please do not go too crazy or you may struggle to reselect the prop.
 
