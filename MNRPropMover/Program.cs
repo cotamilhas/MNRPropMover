@@ -46,8 +46,6 @@ namespace MNRPropMover
             }
         }
 
-        static bool pressed = false;
-
         static void Update(float deltaTime)
         {
             var currentProp = _propStamp.CurrentProp;
