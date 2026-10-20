@@ -34,6 +34,20 @@ namespace MNRPropMover.Types
             if (Win32.GetAsyncKeyState(Win32.VK_DOWN) != 0) currentState |= PropControllerState.TiltBackward;
             if (Win32.GetAsyncKeyState(Win32.VK_LEFT) != 0) currentState |= PropControllerState.TiltLeft;
             if (Win32.GetAsyncKeyState(Win32.VK_RIGHT) != 0) currentState |= PropControllerState.TiltRight;
+#elif _LINUX
+            while (Console.KeyAvailable)
+            {
+                var key = Console.ReadKey(true).Key;
+
+                if (key == ConsoleKey.UpArrow)
+                    currentState |= PropControllerState.TiltForward;
+                else if (key == ConsoleKey.DownArrow)
+                    currentState |= PropControllerState.TiltBackward;
+                else if (key == ConsoleKey.LeftArrow)
+                    currentState |= PropControllerState.TiltLeft;
+                else if (key == ConsoleKey.RightArrow)
+                    currentState |= PropControllerState.TiltRight;
+            }
 #endif
 
             if (((currentState | state) & PropControllerState.TiltForwardBackward) == PropControllerState.TiltForwardBackward)
