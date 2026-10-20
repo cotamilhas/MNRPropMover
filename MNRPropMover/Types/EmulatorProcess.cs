@@ -33,7 +33,11 @@ namespace MNRPropMover.Types
 
         public bool Attach()
         {
+#if _LINUX
+            _process = FindProcess();
+#else
             _process = Process.GetProcessesByName(ProcessName).FirstOrDefault();
+#endif
             
             if (_process == null || _process.MainModule == null)
                 return false;
@@ -48,6 +52,36 @@ namespace MNRPropMover.Types
             return true;
 #endif
         }
+
+#if _LINUX
+        // not optimal at all
+        private static Process? FindProcess()
+        {
+            foreach (var process in Process.GetProcesses())
+            {
+                if (process.ProcessName != "AppRun.wrapped")
+                    continue;
+
+                try
+                {
+                    var status = File.ReadAllLines($"/proc/{process.Id}/status");
+                    var parentLine = status.FirstOrDefault(line => line.StartsWith("PPid:"));
+                    if (parentLine == null)
+                        continue;
+
+                    var parentId = parentLine.Split(':')[1].Trim();
+                    var parentCommand = File.ReadAllText($"/proc/{parentId}/cmdline");
+                    if (parentCommand.Contains("rpcs3", StringComparison.OrdinalIgnoreCase))
+                        return process;
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            return null;
+        }
+#endif
 
         public uint ReadPointer32(ulong address)
         {
@@ -94,9 +128,12 @@ namespace MNRPropMover.Types
 #elif _LINUX
             unsafe
             {
-                var localIov = new LinuxKernel.iovec { iov_base = &buffer, iov_len = buffer.Length };
-                var remoteIov = new LinuxKernel.iovec { iov_base = (void*)address, iov_len = buffer.Length };
-                return LinuxKernel.process_vm_readv(_process.Id, &localIov, 1, &remoteIov, 1, 0) != -1;
+                fixed (byte* localBuffer = buffer)
+                {
+                    var localIov = new LinuxKernel.iovec { iov_base = localBuffer, iov_len = buffer.Length };
+                    var remoteIov = new LinuxKernel.iovec { iov_base = (void*)address, iov_len = buffer.Length };
+                    return LinuxKernel.process_vm_readv(_process.Id, &localIov, 1, &remoteIov, 1, 0) == buffer.Length;
+                }
             }
 #endif
         }
@@ -109,9 +146,12 @@ namespace MNRPropMover.Types
 #elif _LINUX
             unsafe
             {
-                var localIov = new LinuxKernel.iovec { iov_base = &buffer, iov_len = buffer.Length };
-                var remoteIov = new LinuxKernel.iovec { iov_base = (void*)address, iov_len = buffer.Length };
-                return LinuxKernel.process_vm_writev(_process.Id, &localIov, 1, &remoteIov, 1, 0) != -1;
+                fixed (byte* localBuffer = buffer)
+                {
+                    var localIov = new LinuxKernel.iovec { iov_base = localBuffer, iov_len = buffer.Length };
+                    var remoteIov = new LinuxKernel.iovec { iov_base = (void*)address, iov_len = buffer.Length };
+                    return LinuxKernel.process_vm_writev(_process.Id, &localIov, 1, &remoteIov, 1, 0) == buffer.Length;
+                }
             }
 #endif
         }
