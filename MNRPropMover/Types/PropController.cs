@@ -13,10 +13,16 @@ namespace MNRPropMover.Types
         const float MAX_STEP_MOVE = MAX_STEP * 10f;
         const float DURATION = 2f;
 
+        private MNRPropStamp _propStamp;
         private float stepProgress = 0;
         private PropControllerState state = PropControllerState.None;
 
         public MNRProp? Prop { get; protected set; }
+
+        public PropController(MNRPropStamp propStamp)
+        {
+            _propStamp = propStamp;
+        }
 
         public void SetProp(MNRProp prop)
         {
@@ -48,6 +54,9 @@ namespace MNRPropMover.Types
             if (Win32.GetAsyncKeyState(Win32.VK_D) != 0) currentState |= PropControllerState.MoveRight;
             if (Win32.GetAsyncKeyState(Win32.VK_R) != 0) currentState |= PropControllerState.MoveUp;
             if (Win32.GetAsyncKeyState(Win32.VK_F) != 0) currentState |= PropControllerState.MoveDown;
+
+            if (Win32.GetAsyncKeyState(Win32.VK_OEM_4) != 0) currentState |= PropControllerState.PreviousProp;
+            if (Win32.GetAsyncKeyState(Win32.VK_OEM_6) != 0) currentState |= PropControllerState.NextProp;
 #else
             // TODO: Implement backgground key detection for Linux (Equivalent of GetAsyncKeyState?)
             while (Console.KeyAvailable)
@@ -71,6 +80,9 @@ namespace MNRPropMover.Types
                 else if (key == ConsoleKey.D) currentState |= PropControllerState.MoveRight;
                 else if (key == ConsoleKey.R) currentState |= PropControllerState.MoveUp;
                 else if (key == ConsoleKey.F) currentState |= PropControllerState.MoveDown;
+                
+                else if (key == ConsoleKey.Oem4) currentState |= PropControllerState.PreviousProp;
+                else if (key == ConsoleKey.Oem6) currentState |= PropControllerState.NextProp;
             }
 #endif
 
@@ -127,6 +139,17 @@ namespace MNRPropMover.Types
                 Prop.PositionZ += Lerp(MIN_STEP, MAX_STEP_MOVE, stepProgress);
             if ((currentState & PropControllerState.MoveDown) == PropControllerState.MoveDown)
                 Prop.PositionZ -= Lerp(MIN_STEP, MAX_STEP_MOVE, stepProgress);
+
+            if ((currentState & PropControllerState.MoveUpDown) != 0)
+                Prop.SnapFlags &= ~MNRPropSnapFlags.IsSnapped;
+
+            if (((currentState & state) & PropControllerState.PreviousNextProp) == 0)
+            {
+                if ((currentState & PropControllerState.PreviousProp) == PropControllerState.PreviousProp)
+                    _propStamp.CurrentProp = Prop.PreviousProp;
+                if ((currentState & PropControllerState.NextProp) == PropControllerState.NextProp)
+                    _propStamp.CurrentProp = Prop.NextProp;
+            }
 
             state = currentState;
         }

@@ -8,7 +8,7 @@ namespace MNRPropMover.Types
 {
     internal class MNRProp
     {
-        const int SIZE = 0xE0;
+        const int SIZE = 0x70;
 
         public uint Address => _pointer;
 
@@ -23,7 +23,7 @@ namespace MNRPropMover.Types
 
                 var prop = new MNRProp(_process, pProp);
 
-                if (prop.UID == 0x014682D0) // This prop UID crashes the game if its selected, not sure what it is?
+                if (prop.TypeUID == 0x014682D0) // This Type UID crashes the game if its selected, not sure what it is?
                     return prop.PreviousProp;
 
                 return prop;
@@ -40,16 +40,22 @@ namespace MNRPropMover.Types
 
                 var prop = new MNRProp(_process, pProp);
 
-                if (prop.UID == 0x014682D0) // This prop UID crashes the game if its selected, not sure what it is?
+                if (prop.TypeUID == 0x014682D0) // This Type UID crashes the game if its selected, not sure what it is?
                     return prop.NextProp;
 
                 return prop;
             }
         }
 
-        public int UID
+        public int NameUID
+        {
+            get { return _process.ReadInt32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer + 0x10); }
+            set { _process.WriteInt32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer + 0x10, value); }
+        }
+        public int TypeUID
         {
             get { return _process.ReadInt32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer + 0x14); }
+            set { _process.WriteInt32(RPCS3Constants.RPCS3_EMU_BASE_ADDRESS + _pointer + 0x14, value); }
         }
 
         public float PositionX

@@ -28,6 +28,9 @@ namespace MNRPropMover.Types
         MoveUp = (1 << 12),
         MoveDown = (1 << 13),
 
+        PreviousProp = (1 << 14),
+        NextProp = (1 << 15),
+
         TiltForwardBackward = TiltForward | TiltBackward,
         TiltLeftRight = TiltLeft | TiltRight,
 
@@ -37,6 +40,8 @@ namespace MNRPropMover.Types
 
         MoveForwardsBackwards = MoveForwards | MoveBackwards,
         MoveLeftRight = MoveLeft | MoveRight,
-        MoveUpDown = MoveUp | MoveDown
+        MoveUpDown = MoveUp | MoveDown,
+
+        PreviousNextProp = PreviousProp | NextProp
     }
 }

@@ -25,7 +25,7 @@ namespace MNRPropMover
 
             _propStamp = new MNRPropStamp(_process);
             _worldChunks = new MNRWorldChunkList(_process);
-            _propController = new PropController();
+            _propController = new PropController(_propStamp);
 
             while (true)
             {
@@ -58,33 +58,6 @@ namespace MNRPropMover
                     _propController.SetProp(currentProp);
 
                 _propController.Update(deltaTime);
-
-#if _WINDOWS
-                var propPrevious = Win32.GetAsyncKeyState(Win32.VK_OEM_4) != 0;
-                var propNext = Win32.GetAsyncKeyState(Win32.VK_OEM_6) != 0;
-#else
-                // TODO: We want to move this to PropController and implement controls for linux
-                var propPrevious = false;
-                var propNext = false;
-#endif
-
-                if (!pressed)
-                {
-                    if (propPrevious && currentProp.PreviousProp != null)
-                    {
-                        _propStamp.CurrentProp = currentProp.PreviousProp;
-                        pressed = true;
-                    }
-                    if (propNext && currentProp.NextProp != null)
-                    {
-                        _propStamp.CurrentProp = currentProp.NextProp;
-                        pressed = true;
-                    }
-                }
-                else if (pressed && !propPrevious && !propNext)
-                {
-                    pressed = false;
-                }
 
                 Console.Write($"Current Prop Information:\n\n" +
                                 $"Position: X={currentProp.PositionX}, Y={currentProp.PositionY}, Z={currentProp.PositionZ}\n" +
