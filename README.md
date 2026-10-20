@@ -14,6 +14,8 @@ Please do not report these unless you have good reason to believe that it is an 
 
 ## Controls
 
+**IF YOU ARE USING LINUX:** Please note that you MUST have the console window selected for controls to work.
+
 **Up Arrow** - Tilt Forwards
 
 **Down Arrow** - Tilt Backwards
